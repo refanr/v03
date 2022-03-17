@@ -1,0 +1,33 @@
+tunes - id,name,genreid,content,
+genres - id, genreName,
+
+read all tunes - get http://localhost:3000/api/v1/tunes
+read a tune - get http://localhost:3000/api/v1/tunes/{id}
+create a new tune - post http://localhost:3000/api/v1/tunes
+update a tune - put http://localhost:3000/api/v1/tunes/{id}
+
+read all tunes - get http://localhost:3000/api/v1/genres
+create a new genre - post http://localhost:3000/api/v1/genres
+delete a genre - delete http://localhost:3000/api/v1/genres/{id}
+
+app.post(apiPath + version + '/stations', (req, res) => {
+    if (req.body === undefined || req.body.description === undefined || req.body.lat === undefined || req.body.lon === undefined) {
+        res.status(400).json({ 'message': "Stations require a description, lat and lon in the request body" });
+    } else {
+        let lat = Number(req.body.lat);
+        let lon = Number(req.body.lon);
+
+        if (isNaN(lat) || lat < -90.0 || lat > 90.0) {
+            return res.status(400).json({ 'message': "Latitude values must be in the interval [-90,90]." });
+        }
+
+        if (isNaN(lon) || lon < -180.0 || lat > 180.0) {
+            return res.status(400).json({ 'message': "Longitude values must be in the interval [-180,180]." });
+        }
+
+        let newStation = { description: req.body.description, lat: lat, lon: lon, id: nextStationId, observations: [] };
+        stations.push(newStation);
+        nextStationId++;
+        res.status(201).json(newStation);
+    }
+});
